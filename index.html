@@ -682,16 +682,16 @@
 
   // ── GÉNÈRE LES SEMAINES DISPONIBLES (8 semaines à venir) ──
   function getNextTueMer(weeksAhead) {
-    // Retourne [mardi, mercredi] de la semaine N à partir d'aujourd'hui
     const base = new Date();
     base.setHours(0,0,0,0);
-    // Avancer au prochain lundi de la semaine cible
-    const dayOfWeek = base.getDay(); // 0=dim
-    const daysToMon = (dayOfWeek === 0 ? 1 : 8 - dayOfWeek) + (weeksAhead - 1) * 7;
-    const mon = new Date(base); mon.setDate(base.getDate() + (dayOfWeek === 1 ? weeksAhead*7 : daysToMon));
-    // Si on est lundi, avancer d'une semaine complète
-    const tue = new Date(mon); tue.setDate(mon.getDate() + 1);
-    const wed = new Date(mon); wed.setDate(mon.getDate() + 2);
+    const day = base.getDay();
+    const daysToCurrentMon = (day === 0) ? -6 : 1 - day;
+    const currentMon = new Date(base);
+    currentMon.setDate(base.getDate() + daysToCurrentMon);
+    const targetMon = new Date(currentMon);
+    targetMon.setDate(currentMon.getDate() + weeksAhead * 7);
+    const tue = new Date(targetMon); tue.setDate(targetMon.getDate() + 1);
+    const wed = new Date(targetMon); wed.setDate(targetMon.getDate() + 2);
     return [tue, wed];
   }
 
