@@ -682,14 +682,18 @@
 
   // ── GÉNÈRE LES SEMAINES DISPONIBLES (8 semaines à venir) ──
   function getNextTueMer(weeksAhead) {
+    // Trouve le mardi de la semaine ISO N (lundi=début de semaine)
     const base = new Date();
     base.setHours(0,0,0,0);
-    const day = base.getDay();
+    const day = base.getDay(); // 0=dim, 1=lun, 2=mar...
+    // Nombre de jours pour aller au lundi de la semaine courante
     const daysToCurrentMon = (day === 0) ? -6 : 1 - day;
     const currentMon = new Date(base);
     currentMon.setDate(base.getDate() + daysToCurrentMon);
+    // Avancer de weeksAhead semaines
     const targetMon = new Date(currentMon);
     targetMon.setDate(currentMon.getDate() + weeksAhead * 7);
+    // Mardi = lundi + 1, Mercredi = lundi + 2
     const tue = new Date(targetMon); tue.setDate(targetMon.getDate() + 1);
     const wed = new Date(targetMon); wed.setDate(targetMon.getDate() + 2);
     return [tue, wed];
@@ -700,7 +704,10 @@
   }
 
   function isoDate(d) {
-    return d.toISOString().split('T')[0];
+    const yyyy = d.getFullYear();
+    const mm   = String(d.getMonth() + 1).padStart(2, '0');
+    const dd   = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   }
 
   // Initialise le select de semaines
@@ -737,21 +744,29 @@
       { iso: wedISO, label: 'Mercredi', icon: '📅' },
     ];
 
-    // 2 colonnes par jour × 3 créneaux
     grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
 
     jours.forEach(jour => {
+      const estPris = joursPris.includes(jour.iso);
       heures.forEach(h => {
         const div = document.createElement('div');
-        div.className = 'creneau';
-        div.innerHTML = `<div class="icon">${jour.icon}</div><strong>${jour.label}</strong><br/>${h.replace(':','h')}`;
-        div.onclick = () => selectCreneau(div, `${jour.iso}|${h}`);
+        if (estPris) {
+          // Jour complet — grisé et non cliquable
+          div.className = 'creneau';
+          div.style.opacity = '0.35';
+          div.style.cursor = 'not-allowed';
+          div.style.background = '#f0f0f0';
+          div.innerHTML = `<div class="icon">🚫</div><strong>${jour.label}</strong><br/>Complet`;
+        } else {
+          div.className = 'creneau';
+          div.innerHTML = `<div class="icon">${jour.icon}</div><strong>${jour.label}</strong><br/>${h.replace(':','h')}`;
+          div.onclick = () => selectCreneau(div, `${jour.iso}|${h}`);
+        }
         grid.appendChild(div);
       });
     });
 
     wrapper.style.display = 'block';
-    // clear erreur semaine
     document.getElementById('semaine-select').classList.remove('error');
     document.getElementById('err-date').classList.remove('show');
   }
@@ -763,7 +778,31 @@
     document.getElementById('err-creneau').classList.remove('show');
   }
 
-  // ── NAVIGATION ──
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz93QTmXpcHc-epzaOwz_j4HdRKtUGsyr8AZ8JWYa6C0s7qrwbNF5BHOwJJxi6b31RE/exec';
+
+  // ── JOURS DÉJÀ PRIS (chargés depuis Google Sheets) ──
+  let joursPris = [];
+
+  async function chargerDispos() {
+    try {
+      const resp = await fetch(APPS_SCRIPT_URL + '?action=getDispos', { mode: 'no-cors' });
+      // no-cors ne permet pas de lire la réponse, on utilise une iframe trick
+      // À la place on charge via un script dynamique
+    } catch(e) {}
+  }
+
+  // Charge les dispos via un appel JSONP-like
+  function chargerDisposJsonp() {
+    return fetch(APPS_SCRIPT_URL + '?action=getDispos')
+      .then(r => r.json())
+      .then(data => { joursPris = data || []; })
+      .catch(() => { joursPris = []; });
+  }
+
+  let currentPage = 1;
+
+  // Lance le chargement au démarrage
+  chargerDisposJsonp();
   function goTo(pageNum) {
     if (pageNum > currentPage && !validate(currentPage)) return;
     currentPage = pageNum;
@@ -774,8 +813,6 @@
     if (pageNum === 4) buildRecap();
     window.scrollTo({ top: document.querySelector('.card').offsetTop - 20, behavior: 'smooth' });
   }
-
-  let currentPage = 1;
 
   function updateSteps(n) {
     for (let i = 1; i <= 4; i++) {
@@ -890,8 +927,6 @@
   }
 
   // ── SOUMISSION ──
-  // 🔧 REMPLACEZ cette URL par l'URL de votre Google Apps Script déployé
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxlndKpXR48vxEB8XuOsCbICjNAIiMjy6avRx3YCIXZ6RxNm6-M2mqM21AYqohf-AtH/exec';
 
   async function submitForm() {
     const btn = document.getElementById('btn-submit');
@@ -915,6 +950,7 @@
       commentaire: document.getElementById('commentaire').value.trim(),
       date:        dateRdv,
       heure:       heureRdv,
+      jour:        dateRdv ? (new Date(dateRdv + 'T12:00:00').getDay() === 2 ? 'mardi' : 'mercredi') : '',
     };
 
     try {
@@ -934,6 +970,7 @@
           commentaire: payload.commentaire,
           date:        payload.date,
           heure:       payload.heure,
+          jour:        payload.jour,
         });
         await fetch(APPS_SCRIPT_URL + '?' + params.toString(), {
           method: 'GET',
