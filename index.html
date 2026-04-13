@@ -504,7 +504,7 @@
   <div class="steps" id="steps">
     <div class="step active" id="step1">
       <div class="step-num">1</div>
-      <span class="step-label">Coordonnées</span>
+      <span class="step-label">Créneau</span>
     </div>
     <div class="step" id="step2">
       <div class="step-num">2</div>
@@ -512,7 +512,7 @@
     </div>
     <div class="step" id="step3">
       <div class="step-num">3</div>
-      <span class="step-label">Créneau</span>
+      <span class="step-label">Coordonnées</span>
     </div>
     <div class="step" id="step4">
       <div class="step-num">4</div>
@@ -520,36 +520,35 @@
     </div>
   </div>
 
-  <!-- PAGE 1 : COORDONNÉES -->
+  <!-- PAGE 1 : CRÉNEAU -->
   <div class="page active" id="page1">
-    <div class="section-title">Vos coordonnées</div>
-    <div class="grid-2">
-      <div class="field">
-        <label>Prénom <span class="req">*</span></label>
-        <input type="text" id="prenom" placeholder="Jean" autocomplete="given-name"/>
-        <span class="err-msg" id="err-prenom">Champ requis</span>
-      </div>
-      <div class="field">
-        <label>Nom <span class="req">*</span></label>
-        <input type="text" id="nom" placeholder="Dupont" autocomplete="family-name"/>
-        <span class="err-msg" id="err-nom">Champ requis</span>
-      </div>
-      <div class="field">
-        <label>Téléphone <span class="req">*</span></label>
-        <input type="tel" id="tel" placeholder="06 12 34 56 78" autocomplete="tel"/>
-        <span class="err-msg" id="err-tel">Numéro invalide</span>
-      </div>
-      <div class="field">
-        <label>Email</label>
-        <input type="email" id="email" placeholder="jean@email.fr" autocomplete="email"/>
-        <span class="err-msg" id="err-email">Email invalide</span>
-      </div>
-      <div class="field full">
-        <label>Adresse d'intervention <span class="req">*</span></label>
-        <input type="text" id="adresse" placeholder="12 rue des Lilas, Albi" autocomplete="street-address"/>
-        <span class="err-msg" id="err-adresse">Champ requis</span>
-      </div>
+    <div class="section-title">Choisissez un créneau</div>
+
+    <p style="font-size:.92rem;color:var(--grey);margin-bottom:22px;line-height:1.6;">
+      Nos visites de devis ont lieu <strong style="color:var(--slate)">le mardi et le mercredi à partir de 17h</strong>.<br/>
+      Sélectionnez la semaine puis le créneau qui vous convient.
+    </p>
+
+    <div class="field" style="margin-bottom:24px;">
+      <label>Semaine souhaitée <span class="req">*</span></label>
+      <select id="semaine-select" onchange="buildSlots()">
+        <option value="">— Sélectionnez une semaine —</option>
+      </select>
+      <span class="err-msg" id="err-date">Veuillez choisir une semaine</span>
     </div>
+
+    <div class="field" id="slots-wrapper" style="display:none;">
+      <label>Créneau disponible <span class="req">*</span></label>
+      <div class="creneaux-grid" id="creneaux-grid" style="grid-template-columns:1fr 1fr 1fr;">
+        <!-- rempli dynamiquement -->
+      </div>
+      <span class="err-msg" id="err-creneau">Veuillez sélectionner un créneau</span>
+    </div>
+
+    <div class="notice" style="margin-top:20px;">
+      <strong>⏱ Durée de la visite : 1 heure.</strong> Votre RDV sera confirmé par SMS/email sous 24h. Devis remis sous 7 jours — garanti.
+    </div>
+
     <div class="btn-row">
       <button class="btn btn-primary" onclick="goTo(2)"><span class="btn-text">Suivant →</span><div class="spinner"></div></button>
     </div>
@@ -602,35 +601,36 @@
     </div>
   </div>
 
-  <!-- PAGE 3 : CRÉNEAU -->
+  <!-- PAGE 3 : COORDONNÉES -->
   <div class="page" id="page3">
-    <div class="section-title">Choisissez un créneau</div>
-
-    <p style="font-size:.92rem;color:var(--grey);margin-bottom:22px;line-height:1.6;">
-      Nos visites de devis ont lieu <strong style="color:var(--slate)">le mardi et le mercredi à partir de 17h</strong>.<br/>
-      Sélectionnez la semaine puis le créneau qui vous convient.
-    </p>
-
-    <div class="field" style="margin-bottom:24px;">
-      <label>Semaine souhaitée <span class="req">*</span></label>
-      <select id="semaine-select" onchange="buildSlots()">
-        <option value="">— Sélectionnez une semaine —</option>
-      </select>
-      <span class="err-msg" id="err-date">Veuillez choisir une semaine</span>
-    </div>
-
-    <div class="field" id="slots-wrapper" style="display:none;">
-      <label>Créneau disponible <span class="req">*</span></label>
-      <div class="creneaux-grid" id="creneaux-grid" style="grid-template-columns:1fr 1fr 1fr;">
-        <!-- rempli dynamiquement -->
+    <div class="section-title">Vos coordonnées</div>
+    <div class="grid-2">
+      <div class="field">
+        <label>Prénom <span class="req">*</span></label>
+        <input type="text" id="prenom" placeholder="Jean" autocomplete="given-name"/>
+        <span class="err-msg" id="err-prenom">Champ requis</span>
       </div>
-      <span class="err-msg" id="err-creneau">Veuillez sélectionner un créneau</span>
+      <div class="field">
+        <label>Nom <span class="req">*</span></label>
+        <input type="text" id="nom" placeholder="Dupont" autocomplete="family-name"/>
+        <span class="err-msg" id="err-nom">Champ requis</span>
+      </div>
+      <div class="field">
+        <label>Téléphone <span class="req">*</span></label>
+        <input type="tel" id="tel" placeholder="06 12 34 56 78" autocomplete="tel"/>
+        <span class="err-msg" id="err-tel">Numéro invalide</span>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="jean@email.fr" autocomplete="email"/>
+        <span class="err-msg" id="err-email">Email invalide</span>
+      </div>
+      <div class="field full">
+        <label>Adresse d'intervention <span class="req">*</span></label>
+        <input type="text" id="adresse" placeholder="12 rue des Lilas, Albi" autocomplete="street-address"/>
+        <span class="err-msg" id="err-adresse">Champ requis</span>
+      </div>
     </div>
-
-    <div class="notice" style="margin-top:20px;">
-      <strong>⏱ Durée de la visite : 1 heure.</strong> Votre RDV sera confirmé par SMS/email sous 24h. Devis remis sous 7 jours — garanti.
-    </div>
-
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="goTo(2)">← Retour</button>
       <button class="btn btn-primary" onclick="goTo(4)"><span class="btn-text">Récapitulatif →</span><div class="spinner"></div></button>
@@ -670,6 +670,12 @@
         <div class="success-pill">📄 Devis sous 7 jours</div>
         <div class="success-pill">📞 Confirmation sous 24h</div>
         <div class="success-pill">🔧 Technicien qualifié</div>
+      </div>
+      <div style="margin-top:28px;">
+        <p style="font-size:.85rem;color:var(--grey);margin-bottom:12px;">Vous voulez en savoir plus sur nous ?</p>
+        <a href="https://www.google.com/maps/place/MT+Services+Albi+%7C+Climatisation+%7C+Pompe+%C3%A0+chaleur+%7C+Plomberie/@43.9657055,2.1815057,543m/data=!3m3!1e3!4b1!5s0x12ade9aa004c810d:0xd563721e1b4dc3f9!4m6!3m5!1s0x12ade9de6748dc4d:0xf5845a9dd14f5425!8m2!3d43.9657055!4d2.1840806!16s%2Fg%2F11sy6xwbg5" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--border);border-radius:50px;padding:12px 24px;font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--slate);text-decoration:none;box-shadow:0 2px 12px rgba(0,0,0,.08);transition:all .2s;">
+          ⭐ Voir nos avis clients Google
+        </a>
       </div>
     </div>
   </div>
@@ -728,7 +734,9 @@
     }
   })();
 
-  function buildSlots() {
+  async function buildSlots() {
+    // Attendre que les dispos soient chargées si pas encore fait
+    if (!disposChargees) await chargerDisposJsonp();
     const val = document.getElementById('semaine-select').value;
     const wrapper = document.getElementById('slots-wrapper');
     const grid = document.getElementById('creneaux-grid');
@@ -782,21 +790,26 @@
 
   // ── JOURS DÉJÀ PRIS (chargés depuis Google Sheets) ──
   let joursPris = [];
+  let disposChargees = false;
 
-  async function chargerDispos() {
+  async function chargerDisposJsonp() {
     try {
-      const resp = await fetch(APPS_SCRIPT_URL + '?action=getDispos', { mode: 'no-cors' });
-      // no-cors ne permet pas de lire la réponse, on utilise une iframe trick
-      // À la place on charge via un script dynamique
-    } catch(e) {}
-  }
-
-  // Charge les dispos via un appel JSONP-like
-  function chargerDisposJsonp() {
-    return fetch(APPS_SCRIPT_URL + '?action=getDispos')
-      .then(r => r.json())
-      .then(data => { joursPris = data || []; })
-      .catch(() => { joursPris = []; });
+      const resp = await fetch(APPS_SCRIPT_URL + '?action=getDispos');
+      const data = await resp.json();
+      // Les dates peuvent être des objets Date si Sheets les convertit, on force en string
+      joursPris = (data || []).map(d => {
+        if (typeof d === 'string') return d;
+        // Si c'est un objet Date sérialisé
+        const dt = new Date(d);
+        const yyyy = dt.getFullYear();
+        const mm   = String(dt.getMonth() + 1).padStart(2, '0');
+        const dd   = String(dt.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+      });
+    } catch(e) {
+      joursPris = [];
+    }
+    disposChargees = true;
   }
 
   let currentPage = 1;
@@ -842,40 +855,8 @@
       }
     };
 
+    // Page 1 = Créneau
     if (page === 1) {
-      req('prenom','err-prenom');
-      req('nom','err-nom');
-      req('adresse','err-adresse');
-
-      // tel
-      const tel = document.getElementById('tel').value.replace(/\s/g,'');
-      const telRe = /^(\+33|0)[0-9]{9}$/;
-      if (!telRe.test(tel)) {
-        document.getElementById('tel').classList.add('error');
-        document.getElementById('err-tel').classList.add('show');
-        ok = false;
-      } else {
-        document.getElementById('tel').classList.remove('error');
-        document.getElementById('err-tel').classList.remove('show');
-      }
-
-      // email optionnel mais validé si rempli
-      const email = document.getElementById('email').value.trim();
-      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        document.getElementById('email').classList.add('error');
-        document.getElementById('err-email').classList.add('show');
-        ok = false;
-      } else if (email) {
-        document.getElementById('email').classList.remove('error');
-        document.getElementById('err-email').classList.remove('show');
-      }
-    }
-
-    if (page === 2) {
-      req('logement','err-logement');
-    }
-
-    if (page === 3) {
       const semaineVal = document.getElementById('semaine-select').value;
       if (!semaineVal) {
         document.getElementById('semaine-select').classList.add('error');
@@ -889,6 +870,39 @@
       if (!selectedCreneau) {
         document.getElementById('err-creneau').classList.add('show');
         ok = false;
+      }
+    }
+
+    // Page 2 = Projet
+    if (page === 2) {
+      req('logement','err-logement');
+    }
+
+    // Page 3 = Coordonnées
+    if (page === 3) {
+      req('prenom','err-prenom');
+      req('nom','err-nom');
+      req('adresse','err-adresse');
+
+      const tel = document.getElementById('tel').value.replace(/\s/g,'');
+      const telRe = /^(\+33|0)[0-9]{9}$/;
+      if (!telRe.test(tel)) {
+        document.getElementById('tel').classList.add('error');
+        document.getElementById('err-tel').classList.add('show');
+        ok = false;
+      } else {
+        document.getElementById('tel').classList.remove('error');
+        document.getElementById('err-tel').classList.remove('show');
+      }
+
+      const email = document.getElementById('email').value.trim();
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('email').classList.add('error');
+        document.getElementById('err-email').classList.add('show');
+        ok = false;
+      } else if (email) {
+        document.getElementById('email').classList.remove('error');
+        document.getElementById('err-email').classList.remove('show');
       }
     }
 
